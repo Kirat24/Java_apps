@@ -380,6 +380,7 @@ The five components that we are building are:-
 - CLIRunner:-Parse user CLI inputs and then calls the 
 corresponding service methods.
 - main:-Create above components and start applications
+
 ##WORKFLOW
 ![](images/component.png)
 
