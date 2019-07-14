@@ -162,5 +162,586 @@ frontend to backend. This API consists of classes and interfaces written in Java
  between your Java program and databases i.e it establishes a link between the
   two so that a programmer could send data from Java code and store it in the 
   database for future use.
+  
  ##Basic Flow
+ The below diagram describes the basic workflow of the JDBC :
+![]images/flow.png
+
+So first you application will mount the driver and then using the drive it will create a connection
+.From connections , we can execute the SQL statements whether they are queries or or actual statements by themselves.
+Then, we can either commit those changes if they were any or roll them back and then we can close the connection.
+Each and every operation in JDBC throws and SQL Exception which is used to know what cause an error
+
+##Postgres
+PostgreSQL or "Postgres", is an object-relational database management 
+system(ORDBMS) with an emphasis on extensibility and standards-compliance.
+ As a database server, its primary function is to store data securely, 
+ supporting best practices, and to allow for retrieval at the request 
+ of other software applications.For this app , we have created 5 tables in a database 
+The structure of the queries are given in the `jdbc_sql`  file and documentation of installing postgres through docker is 
+given in the `readme.md.`
+##Creating the project
+First, We need to add JDBC driver, made changes in your pom.xml file 
+
+```
+<dependency>
+<groupId>org.postgresql</groupId>
+<artifactId>postgresql</artifactId>
+<version>42.2.5</version>
+</dependency>
+```
+Now, we are hoing to craete a java class named.
+`JDBC Executer` that is going to be main entry point of this app so taht we can run all pur functions.
+In order to create a connection with the database we need to craete a java class named`DatabaseConnectionManager
+We are going create a constructor that is going to take four arguments in order to mestablih an connection with
+the database. The sample code for  the constructor is:-
+```
+public DatabaseConnectionManager(String host, String databaseName, String username,
+      String password) {
+    this.url = "jdbc:postgresql://" + host + "/" + databaseName;
+    this.properties = new Properties();
+    this.properties.setProperty("user", username);
+    this.properties.setProperty("password", password);
+  }
+```
+
+Then we ae going to create an nterface named `DataTransferObject` to hold properties and getters and setters.
+Create   another class named `DataAccessObject(DAO)`  where we are going to define our
+CRUD  i.e Create, Read, Update and Delete operations.
+Consider an  example, for a query that needs data from all four tables nad output them in a 
+result set.
+```
+SELECT  c.first_name, c.last_name, c.email,
+o.order_id,  o.creation_date, o.total_due, 
+o.status,  s.first_name, s.last_name, s.email,
+ol.quantity,  p.code, p.name, p.size, p.variety,
+p.price
+from orders o 
+join customer c on o.customer_id = c.customer_id
+join salesperson s ono.salesperson_id=s.salesperson_id 
+join order_item ol on ol.order_id=o.order_id 
+join product p on ol.product_id = p.product_id
+where o.order_id = ?;
+```
+Then now for this we need Customer DAO and Orders DAO and both are going to extends DataAccessObject Class .
+we are going to CRUD operations in the both. We are going to create DTO for  Customer,Order and OrderLine which are going to implement `DataTransferObject ` class.
+Customer class will look like this.
+```
+package ca.jrvs.apps.jdbc;
+
+import ca.jrvs.apps.jdbc.util.DataTransferObject;
+
+public class Customer implements DataTransferObject {
+
+  private long id;
+  private String firstName;
+  private String lastName;
+  private String email;
+  private String phone;
+  private String address;
+  private String city;
+  private String state;
+  private String zipCode;
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public String getFirstName() {
+    return firstName;
+  }
+
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+  public String getLastName() {
+    return lastName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public String getPhone() {
+    return phone;
+  }
+
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
+  }
+
+  public String getCity() {
+    return city;
+  }
+
+  public void setCity(String city) {
+    this.city = city;
+  }
+
+  public String getState() {
+    return state;
+  }
+
+  public void setState(String state) {
+    this.state = state;
+  }
+
+  public String getZipCode() {
+    return zipCode;
+  }
+
+  public void setZipCode(String zipCode) {
+    this.zipCode = zipCode;
+  }
+
+  @Override
+  public String toString() {
+    return "Customer{" +
+        "id=" + id +
+        ", firstName='" + firstName + '\'' +
+        ", lastName='" + lastName + '\'' +
+        ", email='" + email + '\'' +
+        ", phone='" + phone + '\'' +
+        ", address='" + address + '\'' +
+        ", city='" + city + '\'' +
+        ", state='" + state + '\'' +
+        ", zipCode='" + zipCode + '\'' +
+        '}';
+  }
+}
+```
+
+We are going to include every field that is in customer table and gonna generate getters and setters for them
+we are gonna implement the code the result we are going to get is:
+```
+{"id" : 1000,
+"customerFirstName" : "Angela",
+"customerLastName" : "Crawford",
+"customerEmail" : "acrawford8p@com.com",
+"creationDate" : 1463198400000,
+"totalDue" : 118.22,
+"status" : "paid",
+"salespersonFirstName" : "Edward",
+"salespersonLastName" : "Kelley",
+"salespersonEmail" : "ekelleyu@hplussport.com",
+"orderLines" : [ {
+     "quanitity" : 31,
+     "productCode" : "MWCRA20",
+     "productName" : "Mineral Water",
+     "productVariety" : "Cranberry",
+     "productPrice" : 1.79  }, 
+     {
+     "quanitity" : 17,
+     "productCode" : "MWLEM32",
+     "productName" : "Mineral Water",
+     "produceSize" : 32,
+     "productVariety" : "Lemon-Lime",
+     "productPrice" : 3.69 
+      } ]
+     }
+```
+##Enhancements:- 
+We can  make following enhancements to the systems:- 
+- Classification of SQLException into transient and non-transient types.
+- Support for chained exceptions.
+
+#TWITTER CLI APP
+##Introduction
+In this app, we ae actually building Twiietr Restful API to automate the twitter 
+functionality. We can post , delete, or get  tweet.
+We building basically five components we are dependent on one another.
+We are using HTTPClient for sending and receiving the requested data on the twitter app.
+The explanation for the componets are:-
+The five components that we are building are:-
+- HttpClient :- to handle HTTP request.
+- TwitterRestDao:- Data Access Object which handles tweet object
+- TwitterService:-Implements the business logic 
+- CLIRunner:-Parse user CLI inputs and then calls the 
+corresponding service methods.
+- main:-Create above components and start applications
+##WORKFLOW
+![]
+
+
+##DEMO
+Lets take and example to demonstrate the above:-
+Lets suppose we want to post a tweet with geotag, following are thwe arguments
+ that we are going to pass:
+
+`post "my firsttweet" "-10:20"` 
+Inorder to post tweet we need credentials for that. Get keys and tokens from 
+`App dashboard`.
+It is good practice to declare them as environment variable rather than storing them in a  variable
+ 
+Now, for the first component i.e HTTPClient we need to edit our `pom.xml ` file.
+ ```
+ <!--oauth 1.0 and httpclient4-->
+ <dependency>
+     <groupId>oauth.signpost</groupId>
+     <artifactId>signpost-commonshttp4</artifactId>
+      <version>1.2.1.2</version>
+  </dependency
+ ```
+   First we need to connection with Twitter app and 
+   we need to get the data and parse it.For that we need to build interface for that HTTPHelper
+   ```
+   package ca.jrvs.apps.twitter.dao.helper;
+   
+   import java.net.URI;
+   import org.apache.http.HttpResponse;
+   import org.apache.http.entity.StringEntity;
+   
+   public interface HttpHelper {
+   
+     HttpResponse httpPost(URI uri);
+   
+     HttpResponse httpPost(URI uri, StringEntity stringEntity);
+   
+     HttpResponse httpGet(URI uri);
+   }
+   ```
+   Then `ApacheHttpHelper` is going to implement this `HttpHelper`interface.
+   Next we are going to build `TwitterRestDao` class which is going to be implementation of the `CrdRepository` interface
+   ```
+   
+   package ca.jrvs.apps.twitter.dao;
+   
+   public interface CrdRepository<T, ID> {
+   
+     /**
+      * Create an entity to the underlying storage
+      * @param entity entity that to be created
+      * @return created entity
+      */
+     T create(T entity);
+   
+     /**
+      * Find an entity by its id
+      * @param id entity id
+      * @return
+      */
+     T findById(ID id);
+   
+     /**
+      * Delete an entity by its ID
+      * @param id of the entity to be deleted
+      * @return deleted entity
+      */
+     T deleteById(ID id);
+   }
+
+   ```
+The third component is going to be TwitterService where are implementing the business logic.
+`TwitterServiceImp` class implements  `TwitterService` interface.
+```
+package ca.jrvs.apps.twitter.service;
+
+import ca.jrvs.apps.twitter.dto.Tweet;
+import java.util.List;
+
+public interface TwitterService {
+
+  /**
+   * Post a Tweet along with a geo location.
+   * Print Tweet JSON which returned by the Twitter API
+   *
+   * @param text tweet text
+   * @param latitude geo latitude
+   * @param longitude geo longitude
+   * @return Tweet object which is returned by the Twitter API
+   *
+   * @throws IllegalArgumentException if text exceed max number of allowed characters
+   *                                  or lat/long out of range
+   */
+  Tweet postTweet(String text, Double latitude, Double longitude);
+
+
+  /**
+   * Search a Tweet by id and print Tweet Object which returned by the Twitter API
+   *
+   * @param id tweet id
+   * @param fields print Tweet fields from this param. Print all fields if empty
+   * @return Tweet object which is returned by the Twitter API
+   *
+   * @throws IllegalArgumentException if id or fields param is invalid
+   */
+  Tweet showTweet(String id, String[] fields);
+
+  /**
+   * Delete Tweet(s) by id(s).
+   * Print Tweet object(s) which returned by the Twitter API
+   *
+   * @param ids tweet IDs which will be deleted
+   * @return Tweet objects that were deleted through the Twitter API
+   *
+   * @throws IllegalArgumentException if one of the IDs is invalid.
+   */
+  List<Tweet> deleteTweets(String[] ids);
+
+}
+```
+In this are checking that text doesnot exceeds 140 words and longitude and latitude value is between -180to+180
+Forth components is `TwitterCLIRunner`  class which is going to parse the CLI inputs and gonna implements service methods
+```
+
+package ca.jrvs.apps.twitter;
+
+import ca.jrvs.apps.twitter.service.TwitterService;
+import ca.jrvs.apps.twitter.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class TwitterCLIRunner {
+
+  private static final String COORD_SEP = ":";
+  private static final String COMMA = ",";
+
+  private TwitterService service;
+
+  @Autowired
+  public TwitterCLIRunner(TwitterService service) {
+    this.service = service;
+  }
+
+  public void run(String[] args) {
+    if (args.length < 2) {
+      throw new RuntimeException("USAGE: TwitterCLIApp post|show|deleteTweets");
+    }
+
+    switch (args[0].toLowerCase()) {
+      case "post":
+        postTweet(args);
+        break;
+      case "show":
+        showTweet(args);
+        break;
+      case "delete":
+        deleteTweet(args);
+        break;
+      default:
+        System.out.println("USAGE: TwitterCLIApp post|show|delete");
+        break;
+    }
+  }
+
+  protected void postTweet(String[] args) {
+    if (args.length != 3) {
+      throw new RuntimeException("USAGE: TwitterCLIApp post \"tweet_text\" \"latitude:longitude\"");
+    }
+
+    String tweet_txt = args[1];
+    String coord = args[2];
+    String[] coordArray = coord.split(COORD_SEP);
+    if (coordArray.length != 2 || StringUtil.isEmpty(tweet_txt)) {
+      throw new RuntimeException(
+          "Invalid location format\nUSAGE: TwitterCLIApp post \"tweet_text\" \"latitude:longitude\"");
+    }
+    Double lat = null;
+    Double lon = null;
+    try {
+      lat = Double.parseDouble(coordArray[0]);
+      lon = Double.parseDouble(coordArray[1]);
+    } catch (Exception e) {
+      throw new RuntimeException(
+          "Invalid location format\nUSAGE: TwitterCLIApp post \"tweet_text\" \"latitude:longitude\"",
+          e);
+    }
+
+    service.postTweet(tweet_txt, lat, lon);
+  }
+
+  protected void showTweet(String[] args) {
+    if (args.length < 2) {
+      throw new RuntimeException("USAGE: TwitterCLIApp show tweet_id [fields]");
+    }
+    String[] fieldsArray = null;
+    String tweet_id = null;
+
+    switch (args.length) {
+      case 3:
+        String fields = args[2];
+        if (StringUtil.isEmpty(fields)) {
+          throw new RuntimeException(
+              "Error: empty fields. USAGE: TwitterCLIApp show tweet_id [fields]");
+        }
+        fieldsArray = fields.split(COMMA);
+      case 2:
+        tweet_id = args[1];
+        if (StringUtil.isEmpty(tweet_id)) {
+          throw new RuntimeException(
+              "Error: Empty ID\nUSAGE: TwitterCLIApp show tweet_id [fields]");
+        }
+    }
+
+    service.showTweet(tweet_id, fieldsArray);
+  }
+
+  protected void deleteTweet(String[] args) {
+    if (args.length != 2 || StringUtil.isEmpty(args[1])) {
+      throw new RuntimeException("USAGE: TwitterCLIApp deleteTweets tweet_ids");
+    }
+
+    String tweetIds = args[1];
+    String[] ids = tweetIds.split(COMMA);
+    service.deleteTweets(ids);
+  }
+}
+
+```
+The last component `TwitterCLIApp` which is main entry point where we gonna apply the actual logic.
+wer are gonna call the components down in that one
+```
+package ca.jrvs.apps.twitter;
+
+import ca.jrvs.apps.twitter.dao.CrdDao;
+import ca.jrvs.apps.twitter.dao.TwitterRestDao;
+import ca.jrvs.apps.twitter.dao.helper.ApacheHttpHelper;
+import ca.jrvs.apps.twitter.dao.helper.HttpHelper;
+import ca.jrvs.apps.twitter.service.TwitterService;
+import ca.jrvs.apps.twitter.service.TwitterServiceImp;
+
+public class TwitterCLIApp {
+
+  public static void main(String[] args) {
+    //Create components
+    HttpHelper httpHelper = new ApacheHttpHelper();
+    CrdDao dao = new TwitterRestDao(httpHelper);
+    TwitterService service = new TwitterServiceImp(dao);
+
+    //Create Runner
+    TwitterCLIRunner runner = new TwitterCLIRunner(service);
+
+    //Run Application
+    runner.run(args);
+  }
+}
+```
+##Testing
+ A unit test is a piece of code written by a developer that executes a specific functionality in the code to be 
+ tested and asserts a certain behavior or state. We are going to create a test for the `TwitterRestDao` for the create method
+ ```
+ package ca.jrvs.apps.twitter.dao;
+ 
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertNotNull;
+ 
+ import ca.jrvs.apps.twitter.dao.helper.ApacheHttpHelper;
+ import ca.jrvs.apps.twitter.dao.helper.HttpHelper;
+ import ca.jrvs.apps.twitter.dto.Coordinates;
+ import ca.jrvs.apps.twitter.dto.Tweet;
+ import ca.jrvs.apps.twitter.util.JsonUtil;
+ import java.util.Arrays;
+ import org.junit.After;
+ import org.junit.Before;
+ import org.junit.Test;
+ 
+ public class TwitterRestDaoTest extends Object {
+ 
+   private Tweet expectedTweet;
+   private CrdDao dao;
+   private String id;
+ 
+   @Before
+   public void setup() {
+     System.out.println("Setup unit test");
+     //setup a expectedTweet
+     String tweetStr = "this is a test tweet" + System.currentTimeMillis();
+     this.expectedTweet = new Tweet();
+     expectedTweet.setText(tweetStr);
+ 
+     //setup dao
+     HttpHelper httpHelper = new ApacheHttpHelper();
+     this.dao = new TwitterRestDao(httpHelper);
+   }
+ 
+   @After
+   public void cleanup() {
+     System.out.println("Deleting " + this.id);
+     //remove tweet
+     dao.deleteById(this.id);
+   }
+ 
+   @Test
+   public void create() throws Exception {
+     //prepare tweet text
+     Coordinates coordinates = new Coordinates();
+     coordinates.setCoordinates(Arrays.asList(50.0, 50.0));
+     coordinates.setType("Point");
+     expectedTweet.setCoordinates(coordinates);
+     System.out.println(JsonUtil.toPrettyJson(expectedTweet));
+ 
+     //call create method
+     Tweet createTweet = (Tweet) dao.create(expectedTweet);
+     System.out.println(JsonUtil.toPrettyJson(createTweet));
+     //validate tweet object
+     assertTweets(expectedTweet, createTweet);
+     this.id = createTweet.getIdStr();
+ 
+     Tweet showTweet = (Tweet) dao.findById(this.id);
+     assertTweets(expectedTweet, showTweet);
+   }
+ 
+   public void assertTweets(Tweet expected, Tweet actual) {
+     assertNotNull(actual);
+     assertNotNull(actual.getIdStr());
+     assertEquals(expected.getText(), actual.getText());
+     assertEquals(expected.getCoordinates(), actual.getCoordinates());
+   }
+ }
+ ```
+##Spring Framework
+When we have dependencies in our program thenwe can use Spring Framework 
+that is going to manage the relationship by itself and we dont have to worry about it  spring is going to manage 
+by itself.In order to use spring in our program , we need to add dependency in our system.
+```
+
+<parent>
+<groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+   <version>2.1.3.RELEASE</version>
+   <relativePath/>
+</parent>
+
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+Now, we are going to  put annotation @service for classes and @Autowired above the dependencies.
+now we are going to make another package named `spring` under that we are going to implement Java beans i.e first approach for this.
+TwitterRestDao,TwitterServiceImp,TwitterCLIRunner are allJavaBeans. Generally speaking,JavaBeans are java objects that are managed by IoC. (Not all objects are beans)
+We have implemeneted javaBean approach in  `TwitterCLIBean`  and another approach component scan in other class named `TwitterCLIComponentScan`
+TwitterCLIComponent looks like this
+```
+ public static void main(String[] args) {
+    ApplicationContext context = new AnnotationConfigApplicationContext(
+        TwitterCLIComponentScan.class);
+    TwitterCLIRunner runner = context.getBean(TwitterCLIRunner.class);
+    runner.run(args);
+  }
+```
+In this class we need to use @configuration annotation.
 
