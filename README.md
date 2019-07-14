@@ -381,7 +381,7 @@ The five components that we are building are:-
 corresponding service methods.
 - main:-Create above components and start applications
 ##WORKFLOW
-![](images/comonents_design.io (2).png)
+![](images/component.png)
 
 
 ##DEMO
