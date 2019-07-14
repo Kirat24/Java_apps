@@ -165,7 +165,7 @@ frontend to backend. This API consists of classes and interfaces written in Java
   
  ##Basic Flow
  The below diagram describes the basic workflow of the JDBC :
-![]images/flow.png
+![]https://github.com/Kirat24/Java_apps/blob/master/images/flow.png
 
 So first you application will mount the driver and then using the drive it will create a connection
 .From connections , we can execute the SQL statements whether they are queries or or actual statements by themselves.
