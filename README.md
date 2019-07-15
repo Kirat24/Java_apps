@@ -373,7 +373,7 @@ frontend to backend. This API consists of classes and interfaces written in Java
  - Classification of SQLException into transient and non-transient types.
  - Support for chained exceptions.
  
-#TWITTER CLI APP
+ #TWITTER CLI APP
 ##Introduction
  In this app, we ae actually building Twiietr Restful API to automate the twitter 
  functionality. We can post , delete, or get  tweet.
