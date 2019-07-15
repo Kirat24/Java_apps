@@ -1,5 +1,5 @@
 # Java_apps
-In java_apps , we are building three application using different methods and approaches.
+Java_apps , has three applications named:-
 - JavaGrep
 - JDBC
 - TwitterCLIApp
