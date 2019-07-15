@@ -170,7 +170,7 @@ frontend to backend. This API consists of classes and interfaces written in Java
   two so that a programmer could send data from Java code and store it in the 
   database for future use.
   
- ##Basic Flow
+##Basic Flow
  The below diagram describes the basic workflow of the JDBC :
  ![](images/flow.png)
  
@@ -179,7 +179,7 @@ frontend to backend. This API consists of classes and interfaces written in Java
  Then, we can either commit those changes if they were any or roll them back and then we can close the connection.
  Each and every operation in JDBC throws and SQL Exception which is used to know what cause an error
  
- ##Postgres
+##Postgres
  PostgreSQL or "Postgres", is an object-relational database management 
  system(ORDBMS) with an emphasis on extensibility and standards-compliance.
   As a database server, its primary function is to store data securely, 
@@ -187,7 +187,7 @@ frontend to backend. This API consists of classes and interfaces written in Java
   of other software applications.For this app , we have created 5 tables in a database 
  The structure of the queries are given in the `jdbc_sql`  file and documentation of installing postgres through docker is 
  given in the `readme.md.`
- ##Creating the project
+##Creating the project
  First, We need to add JDBC driver, made changes in your pom.xml file 
  
  ```
@@ -368,13 +368,13 @@ frontend to backend. This API consists of classes and interfaces written in Java
        } ]
       }
  ```
- ##Enhancements:- 
+##Enhancements:- 
  We can  make following enhancements to the systems:- 
  - Classification of SQLException into transient and non-transient types.
  - Support for chained exceptions.
  
- #TWITTER CLI APP
- ##Introduction
+#TWITTER CLI APP
+##Introduction
  In this app, we ae actually building Twiietr Restful API to automate the twitter 
  functionality. We can post , delete, or get  tweet.
  We building basically five components we are dependent on one another.
@@ -387,10 +387,10 @@ frontend to backend. This API consists of classes and interfaces written in Java
  - CLIRunner:-Parse user CLI inputs and then calls the 
  corresponding service methods.
  - main:-Create above components and start applications
- ##WORKFLOW
+##WORKFLOW
+ ![](images/component.png)
  
- 
- ##DEMO
+##DEMO
  Lets take and example to demonstrate the above:-
  Lets suppose we want to post a tweet with geotag, following are thwe arguments
   that we are going to pass:
@@ -644,7 +644,7 @@ frontend to backend. This API consists of classes and interfaces written in Java
    }
  }
  ```
- ##Testing
+##Testing
   A unit test is a piece of code written by a developer that executes a specific functionality in the code to be 
   tested and asserts a certain behavior or state. We are going to create a test for the `TwitterRestDao` for the create method
   ```
@@ -717,7 +717,7 @@ frontend to backend. This API consists of classes and interfaces written in Java
     }
   }
   ```
- ##Spring Framework
+##Spring Framework
  When we have dependencies in our program thenwe can use Spring Framework 
  that is going to manage the relationship by itself and we dont have to worry about it  spring is going to manage 
  by itself.In order to use spring in our program , we need to add dependency in our system.
@@ -750,5 +750,4 @@ frontend to backend. This API consists of classes and interfaces written in Java
    }
  ```
  In this class we need to use @configuration annotation.
- \
 
