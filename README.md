@@ -1,5 +1,4 @@
-  
-#Java_apps
+# Java_apps
 In java_apps , we are building three application using different methods and approaches.
 - JavaGrep
 - JDBC
@@ -107,7 +106,7 @@ public List<String> readLines(File inputFile) {
   ```
   The issue with using lambda expresiions is that they are hard to debug and have longer call stack
 
-#Maven
+## Maven
 
 Maven is a build automation tool used primarily for Java projects.Maven addresses two aspects of building software: first, it 
 describes how software is built, and second, it describes its dependencies.So we
@@ -159,8 +158,8 @@ describes how software is built, and second, it describes its dependencies.So we
  Run `tree ~/.m2/repository/`
  
  
- #Java DataBase Connectivity(JDBC)
-##Introduction
+ # Java DataBase Connectivity(JDBC)
+   ## Introduction
 JDBC is an acronym for Java Database Connectivity. 
 Its an advancement for ODBC ( Open Database Connectivity ). 
 JDBC is an standard API specification developed in order to move data from 
