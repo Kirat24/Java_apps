@@ -26,7 +26,7 @@ Twitter CPI APP is designed to post, delete or search a tweet on Twitter from co
  
 ## USAGE
  **Posting a Tweet**
- > post "tweet_text" ":latitude:longitude"
+ > post "tweet_text" ":latitude:longitude">
  **Description**  These positional arguments when  passed  in the program is going  to create a tweet with geotag,and output the result in JSON fomat.for eg  `post "my first tweet" "40.730610:-73.935242"` will post tweet **my first tweet** with New York as its location.
  **Deleting a Tweet**
  > delete "tweet_ids"
