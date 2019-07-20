@@ -9,8 +9,8 @@ Java_apps , has three applications named:-
 Twitter CPI APP is designed to post, delete or search a tweet on Twitter from command line using Twitter RESTful API.
 ## WORKFLOW 
   The five components that we are building are:-
-  |Component   |Description|
-  |------------|:---------:|
+  Component   | Description
+  ------------|---------
   |HttpHelper    | to handle HTTP request like GET, PUT, POST|
   |TwitterRestDao|
   |TwitterService|
