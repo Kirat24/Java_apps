@@ -9,6 +9,12 @@ Java_apps , has three applications named:-
 Twitter CPI APP is designed to post, delete or search a tweet on Twitter from command line using Twitter RESTful API.
 ## WORKFLOW 
   The five components that we are building are:-
+  
+  | Command | Description |
+| --- | --- |
+| git status | List all new or modified files |
+| git diff | Show file differences that haven't been staged |
+
   Component   | Description
   ------------|---------
   |HttpHelper    | to handle HTTP request like GET, PUT, POST|
@@ -26,14 +32,14 @@ Twitter CPI APP is designed to post, delete or search a tweet on Twitter from co
  
 ## USAGE
  **Posting a Tweet**
- > post "tweet_text" ":latitude:longitude">
+ ` post "tweet_text" ":latitude:longitude"`
  **Description**  These positional arguments when  passed  in the program is going  to create a tweet with geotag,and output the result in JSON fomat.for eg  `post "my first tweet" "40.730610:-73.935242"` will post tweet **my first tweet** with New York as its location.
  **Deleting a Tweet**
- > delete "tweet_ids"
+ ` delete "tweet_ids"`
  **Description**  These positional arguments when passed  in the program is going  to delete a tweet with the given tweet_id .For eg. 
  `delete "90998"` will delete tweet with given tweet_id i.e 90998.
  **Showing a Tweet**
- > show "tweet_ids"
+ `show "tweet_ids"`
  **Description**  These positional arguments when passed  in the program is going  to look up for a  a tweet with the given tweet_id .For eg. `show "90998" "field_1, field_2..."` will show tweet with given tweet_id i.e 90998 and will show tweet with all foelds if third argument is empty otherwise, it will only specified fields.
  
  
