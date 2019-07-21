@@ -1,4 +1,4 @@
-- [TwitterCLIApp](#TWITTER CLI APP)
+- [TwitterCLIApp](# TWITTER CLI APP)
   * [Introduction](#Introduction)
   * [Usage](#Usage)
   * [Design and Implementation](#Design and Implementation)
