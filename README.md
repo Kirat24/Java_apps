@@ -8,7 +8,7 @@
    * [Introduction](#Introduction)
   * [Usage](#Usage)
   * [Design and Implementation](#Design and Implementation)
-  * [Enhancements and Issues](*Enhancements and Issues)
+  * [Enhancements and Issues](#Enhancements and Issues)
 - [](#heading-2)
   * [Sub-heading](#sub-heading-2)
     + [Sub-sub-heading](#sub-sub-heading-2)
