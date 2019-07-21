@@ -1,10 +1,15 @@
-- [Heading](#heading)
-  * [Sub-heading](#sub-heading)
-    + [Sub-sub-heading](#sub-sub-heading)
-- [Heading](#heading-1)
-  * [Sub-heading](#sub-heading-1)
-    + [Sub-sub-heading](#sub-sub-heading-1)
-- [Heading](#heading-2)
+- [TwitterCLIApp](#TWITTER CLI APP)
+  * [Introduction](#Introduction)
+  * [Usage](#Usage)
+  * [Design and Implementation](#Design and Implementation)
+  * [Testing](*Testing)
+  * [Enhancements](*Enhancements)
+- [Java Grep](# JAVA GREP APP)
+   * [Introduction](#Introduction)
+  * [Usage](#Usage)
+  * [Design and Implementation](#Design and Implementation)
+  * [Enhancements and Issues](*Enhancements and Issues)
+- [](#heading-2)
   * [Sub-heading](#sub-heading-2)
     + [Sub-sub-heading](#sub-sub-heading-2)
 
@@ -19,7 +24,7 @@ Java_apps , has three applications named:-
    ## Introduction
 Twitter CPI APP is designed to post, delete or search a tweet on Twitter from command line using Twitter RESTful API.
 
-## USAGE
+## Usage
  - **Posting a Tweet**
  ```
  post "tweet_text" ":latitude:longitude"
@@ -37,8 +42,7 @@ Twitter CPI APP is designed to post, delete or search a tweet on Twitter from co
  ```
  **Description**  These positional arguments when passed  in the program is going  to look up for a  a tweet with the given tweet_id .For eg. `show "90998" "field_1, field_2..."` will show tweet with given tweet_id i.e 90998 and will show tweet with all foelds if third argument is empty otherwise, it will only specified fields.
  
-## DESIGN AND IMPLEMENTATION
-
+## Design and Implementation
   The five components that we are building are:-
   
   Component   | Description
