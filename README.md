@@ -7,19 +7,7 @@ Java_apps , has three applications named:-
 # TWITTER CLI APP
    ## Introduction
 Twitter CPI APP is designed to post, delete or search a tweet on Twitter from command line using Twitter RESTful API.
-## WORKFLOW 
-  The five components that we are building are:-
-  
-  Component   | Description
-  ------------|---------
-  |HttpHelper    | to handle HTTP request like GET, PUT, POST|
-  |TwitterRestDao|Data Access Object which handles tweet object
-  |TwitterService|Implements the business logic
-  |CLIRunner     |Parse user CLI inputs and then calls the corresponding service methods.
-  |main          |Create above components and start application 
-  
-  ![](images/component.png)
- 
+
 ## USAGE
  - **Posting a Tweet**
  ```
@@ -38,276 +26,30 @@ Twitter CPI APP is designed to post, delete or search a tweet on Twitter from co
  ```
  **Description**  These positional arguments when passed  in the program is going  to look up for a  a tweet with the given tweet_id .For eg. `show "90998" "field_1, field_2..."` will show tweet with given tweet_id i.e 90998 and will show tweet with all foelds if third argument is empty otherwise, it will only specified fields.
  
- 
- 
- 
- Inorder to post tweet we need credentials for that. Get keys and tokens from 
- `App dashboard`.
- It is good practice to declare them as environment variable rather than storing them in a  variable
+## DESIGN AND IMPLEMENTATION
+
+  The five components that we are building are:-
   
- Now, for the first component i.e HTTPClient we need to edit our `pom.xml ` file.
-  ```
-  <!--oauth 1.0 and httpclient4-->
-  <dependency>
-      <groupId>oauth.signpost</groupId>
-      <artifactId>signpost-commonshttp4</artifactId>
-       <version>1.2.1.2</version>
-   </dependency
-  ```
-    First we need to connection with Twitter app and 
-    we need to get the data and parse it.For that we need to build interface for that HTTPHelper
-    ```
-    package ca.jrvs.apps.twitter.dao.helper;
-    
-    import java.net.URI;
-    import org.apache.http.HttpResponse;
-    import org.apache.http.entity.StringEntity;
-    
-    public interface HttpHelper {
-    
-      HttpResponse httpPost(URI uri);
-    
-      HttpResponse httpPost(URI uri, StringEntity stringEntity);
-    
-      HttpResponse httpGet(URI uri);
-    }
-    ```
-    Then `ApacheHttpHelper` is going to implement this `HttpHelper`interface.
-    Next we are going to build `TwitterRestDao` class which is going to be implementation of the `CrdRepository` interface
-    ```
-    
-    package ca.jrvs.apps.twitter.dao;
-    
-    public interface CrdRepository<T, ID> {
-    
-      /**
-       * Create an entity to the underlying storage
-       * @param entity entity that to be created
-       * @return created entity
-       */
-      T create(T entity);
-    
-      /**
-       * Find an entity by its id
-       * @param id entity id
-       * @return
-       */
-      T findById(ID id);
-    
-      /**
-       * Delete an entity by its ID
-       * @param id of the entity to be deleted
-       * @return deleted entity
-       */
-      T deleteById(ID id);
-    }
+  Component   | Description
+  ------------|---------
+  |HttpHelper    | to handle HTTP request like GET, PUT, POST|
+  |TwitterRestDao|Data Access Object which handles tweet object
+  |TwitterService|Implements the business logic
+  |CLIRunner     |Parse user CLI inputs and then calls the corresponding service methods.
+  |main          |Create above components and start application 
+  
+  ![](images/component.png)
+ - TwitterCLIApp is entry point of the application where the main method resides.It contains all the dependencies and user input is passed to TwitterCLIRunner.
+ - TwitterCLIRunner is responsible for parsing the input and depends on  the TwitterService
+ - TwitterServiceImp  is the implementation of TwitterService interface and it is where we implements business logic an in this case it is that tweet_text cannot exceeds 140 characters and latitude and longitude should be btween min and max values defined and this contains another dependency i.e TwitterRestDAO, basically here we validate the tweet.
+
+ - TwitterRestDAO is  implementation of CrdRepository and responsible for creating URIs to post,show and delete tweet .It depends on ApacheHTTPHelper .
+ - ApacheHTTPHelper whih is implemetation of HTTPHelper interface. This class takes URIs and implemets get, post method accordingly and get the response from server.It also has authentication details. 
  
-    ```
- The third component is going to be TwitterService where are implementing the business logic.
- `TwitterServiceImp` class implements  `TwitterService` interface.
- ```
- package ca.jrvs.apps.twitter.service;
- 
- import ca.jrvs.apps.twitter.dto.Tweet;
- import java.util.List;
- 
- public interface TwitterService {
- 
-   /**
-    * Post a Tweet along with a geo location.
-    * Print Tweet JSON which returned by the Twitter API
-    *
-    * @param text tweet text
-    * @param latitude geo latitude
-    * @param longitude geo longitude
-    * @return Tweet object which is returned by the Twitter API
-    *
-    * @throws IllegalArgumentException if text exceed max number of allowed characters
-    *                                  or lat/long out of range
-    */
-   Tweet postTweet(String text, Double latitude, Double longitude);
- 
- 
-   /**
-    * Search a Tweet by id and print Tweet Object which returned by the Twitter API
-    *
-    * @param id tweet id
-    * @param fields print Tweet fields from this param. Print all fields if empty
-    * @return Tweet object which is returned by the Twitter API
-    *
-    * @throws IllegalArgumentException if id or fields param is invalid
-    */
-   Tweet showTweet(String id, String[] fields);
- 
-   /**
-    * Delete Tweet(s) by id(s).
-    * Print Tweet object(s) which returned by the Twitter API
-    *
-    * @param ids tweet IDs which will be deleted
-    * @return Tweet objects that were deleted through the Twitter API
-    *
-    * @throws IllegalArgumentException if one of the IDs is invalid.
-    */
-   List<Tweet> deleteTweets(String[] ids);
- 
- }
- ```
- In this are checking that text doesnot exceeds 140 words and longitude and latitude value is between -180to+180
- Forth components is `TwitterCLIRunner`  class which is going to parse the CLI inputs and gonna implements service methods
- ```
- 
- package ca.jrvs.apps.twitter;
- 
- import ca.jrvs.apps.twitter.service.TwitterService;
- import ca.jrvs.apps.twitter.util.StringUtil;
- import org.springframework.beans.factory.annotation.Autowired;
- import org.springframework.stereotype.Component;
- 
- @Component
- public class TwitterCLIRunner {
- 
-   private static final String COORD_SEP = ":";
-   private static final String COMMA = ",";
- 
-   private TwitterService service;
- 
-   @Autowired
-   public TwitterCLIRunner(TwitterService service) {
-     this.service = service;
-   }
- 
-   public void run(String[] args) {
-     if (args.length < 2) {
-       throw new RuntimeException("USAGE: TwitterCLIApp post|show|deleteTweets");
-     }
- 
-     switch (args[0].toLowerCase()) {
-       case "post":
-         postTweet(args);
-         break;
-       case "show":
-         showTweet(args);
-         break;
-       case "delete":
-         deleteTweet(args);
-         break;
-       default:
-         System.out.println("USAGE: TwitterCLIApp post|show|delete");
-         break;
-     }
-   }
- 
-   protected void postTweet(String[] args) {
-     if (args.length != 3) {
-       throw new RuntimeException("USAGE: TwitterCLIApp post \"tweet_text\" \"latitude:longitude\"");
-     }
- 
-     String tweet_txt = args[1];
-     String coord = args[2];
-     String[] coordArray = coord.split(COORD_SEP);
-     if (coordArray.length != 2 || StringUtil.isEmpty(tweet_txt)) {
-       throw new RuntimeException(
-           "Invalid location format\nUSAGE: TwitterCLIApp post \"tweet_text\" \"latitude:longitude\"");
-     }
-     Double lat = null;
-     Double lon = null;
-     try {
-       lat = Double.parseDouble(coordArray[0]);
-       lon = Double.parseDouble(coordArray[1]);
-     } catch (Exception e) {
-       throw new RuntimeException(
-           "Invalid location format\nUSAGE: TwitterCLIApp post \"tweet_text\" \"latitude:longitude\"",
-           e);
-     }
- 
-     service.postTweet(tweet_txt, lat, lon);
-   }
- 
-   protected void showTweet(String[] args) {
-     if (args.length < 2) {
-       throw new RuntimeException("USAGE: TwitterCLIApp show tweet_id [fields]");
-     }
-     String[] fieldsArray = null;
-     String tweet_id = null;
- 
-     switch (args.length) {
-       case 3:
-         String fields = args[2];
-         if (StringUtil.isEmpty(fields)) {
-           throw new RuntimeException(
-               "Error: empty fields. USAGE: TwitterCLIApp show tweet_id [fields]");
-         }
-         fieldsArray = fields.split(COMMA);
-       case 2:
-         tweet_id = args[1];
-         if (StringUtil.isEmpty(tweet_id)) {
-           throw new RuntimeException(
-               "Error: Empty ID\nUSAGE: TwitterCLIApp show tweet_id [fields]");
-         }
-     }
- 
-     service.showTweet(tweet_id, fieldsArray);
-   }
- 
-   protected void deleteTweet(String[] args) {
-     if (args.length != 2 || StringUtil.isEmpty(args[1])) {
-       throw new RuntimeException("USAGE: TwitterCLIApp deleteTweets tweet_ids");
-     }
- 
-     String tweetIds = args[1];
-     String[] ids = tweetIds.split(COMMA);
-     service.deleteTweets(ids);
-   }
- }
- 
- ```
- The last component `TwitterCLIApp` which is main entry point where we gonna apply the actual logic.
- wer are gonna call the components down in that one
- ```
- package ca.jrvs.apps.twitter;
- 
- import ca.jrvs.apps.twitter.dao.CrdDao;
- import ca.jrvs.apps.twitter.dao.TwitterRestDao;
- import ca.jrvs.apps.twitter.dao.helper.ApacheHttpHelper;
- import ca.jrvs.apps.twitter.dao.helper.HttpHelper;
- import ca.jrvs.apps.twitter.service.TwitterService;
- import ca.jrvs.apps.twitter.service.TwitterServiceImp;
- 
- public class TwitterCLIApp {
- 
-   public static void main(String[] args) {
-     //Create components
-     HttpHelper httpHelper = new ApacheHttpHelper();
-     CrdDao dao = new TwitterRestDao(httpHelper);
-     TwitterService service = new TwitterServiceImp(dao);
- 
-     //Create Runner
-     TwitterCLIRunner runner = new TwitterCLIRunner(service);
- 
-     //Run Application
-     runner.run(args);
-   }
- }
- ```
 ## Testing
   A unit test is a piece of code written by a developer that executes a specific functionality in the code to be 
-  tested and asserts a certain behavior or state. We are going to create a test for the `TwitterRestDao` for the create method
+  tested and asserts a certain behavior or state. Demonstarting ne of the method created for the `TwitterRestDao` for the create method
   ```
-  package ca.jrvs.apps.twitter.dao;
-  
-  import static org.junit.Assert.assertEquals;
-  import static org.junit.Assert.assertNotNull;
-  
-  import ca.jrvs.apps.twitter.dao.helper.ApacheHttpHelper;
-  import ca.jrvs.apps.twitter.dao.helper.HttpHelper;
-  import ca.jrvs.apps.twitter.dto.Coordinates;
-  import ca.jrvs.apps.twitter.dto.Tweet;
-  import ca.jrvs.apps.twitter.util.JsonUtil;
-  import java.util.Arrays;
-  import org.junit.After;
-  import org.junit.Before;
-  import org.junit.Test;
-  
   public class TwitterRestDaoTest extends Object {
   
     private Tweet expectedTweet;
@@ -362,8 +104,16 @@ Twitter CPI APP is designed to post, delete or search a tweet on Twitter from co
     }
   }
   ```
-## Spring Framework
- When we have dependencies in our program thenwe can use Spring Framework 
+  
+  we have three annotations here
+  - @Before:- Run before @Test, public void
+  - @After – Run after @Test, public void
+  - @Test – This is the test method to run, public void
+  
+ 
+
+ ## Enhancements
+ When we have dependencies in our program then we can use Spring Framework 
  that is going to manage the relationship by itself and we dont have to worry about it  spring is going to manage 
  by itself.In order to use spring in our program , we need to add dependency in our system.
  ```
@@ -381,7 +131,7 @@ Twitter CPI APP is designed to post, delete or search a tweet on Twitter from co
  </dependency>
  ```
  
- Now, we are going to  put annotation @service for classes and @Autowired above the dependencies.
+ Now, we are going to  put annotation `@service` for classes and `@Autowired` above the dependencies.
  now we are going to make another package named `spring` under that we are going to implement Java beans i.e first approach for this.
  TwitterRestDao,TwitterServiceImp,TwitterCLIRunner are allJavaBeans. Generally speaking,JavaBeans are java objects that are managed by IoC. (Not all objects are beans)
  We have implemeneted javaBean approach in  `TwitterCLIBean`  and another approach component scan in other class named `TwitterCLIComponentScan`
@@ -394,8 +144,6 @@ Twitter CPI APP is designed to post, delete or search a tweet on Twitter from co
      runner.run(args);
    }
  ```
- In this class we need to use @configuration annotation.
-
 
 
 # Java Grep App
