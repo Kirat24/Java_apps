@@ -1,21 +1,6 @@
-- [TwitterCLIApp](#TWITTER CLI APP)
-  * [Introduction](#Introduction)
-  * [Usage](#Usage)
-  * [Design and Implementation](#Design and Implementation)
-  * [Testing](*Testing)
-  * [Enhancements](*Enhancements)
-- [Java Grep](# JAVA GREP APP)
-   * [Introduction](#Introduction)
-  * [Usage](#Usage)
-  * [Design and Implementation](#Design and Implementation)
-  * [Enhancements and Issues](#Enhancements and Issues)
-- [](#heading-2)
-  * [Sub-heading](#sub-heading-2)
-    + [Sub-sub-heading](#sub-sub-heading-2)
-
 
 # Java_apps
-Java_apps , has three applications named:-
+Java_apps , contains three applications named:-
 - TwitterCLIApp
 - JavaGrep
 - JDBC
