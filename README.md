@@ -7,7 +7,7 @@ Java_apps , contains three applications named:-
 
 # TWITTER CLI APP
    ## Introduction
-Twitter CPI APP is designed to post, delete or search a tweet on Twitter from command line using Twitter RESTful API.
+Twitter CLI APP is designed to post, delete or search a tweet on Twitter from command line using Twitter RESTful API.
 
 ## Usage
  - **Posting a Tweet**
